@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JSON Merger by Md.Rahul Reza</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #333;
+            color: #fff;
+            padding: 15px 0;
+        }
+        .navbar .container {
+            display: flex;
+            align-items: center; /* Center items vertically */
+            justify-content: space-between;
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #000;
+        }
+        .navbar-brand img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+            border-radius: 50%; /* Circular shape */
+            cursor: pointer; /* Add cursor pointer for interaction */
+            transition: transform 1.0s ease; /* Smooth transform animation */
+        }
+        .navbar-brand span {
+            margin-right: 50px; /* Gap of 50px between image and text */
+        }
+        .navbar-brand img:hover {
+            transform: scale(1.1); /* Scale image on hover for slight zoom effect */
+        }
+        .container {
+            max-width: 1080px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .content {
+            text-align: center;
+        }
+        .title {
+            margin-bottom: 20px;
+        }
+        .json-inputs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .json-input {
+            width: 45%;
+        }
+        .json-input textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .merge-button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .merge-button:hover {
+            background-color: #0056b3;
+        }
+        .result pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            text-align: left;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+        }
+        .modal-content img {
+            width: 100%; /* Ensure the image fills the modal */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 0; /* Reset border-radius for rectangular shape */
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-brand" href="https://rahulreza.com/" onclick="redirectWebsite(event)">
+                <img id="logoImage" src="images/rahul.png" alt="Brand Logo" onclick="openModal()">
+                <span class="brand-text">www.rahulreza.com</span>
+            </a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="content">
+            <h3 class="title">Merge Two JSON Arrays</h3>
+            <div class="json-inputs">
+                <div class="json-input">
+                    <h4>JSON 1</h4>
+                    <textarea id="json1" placeholder="Paste JSON 1 here..."></textarea>
+                </div>
+                <div class="json-input">
+                    <h4>JSON 2</h4>
+                    <textarea id="json2" placeholder="Paste JSON 2 here..."></textarea>
+                </div>
+            </div>
+            <button onclick="mergeArray();" class="merge-button">Merge JSON</button>
+            <div class="result">
+                <h4>Merged JSON</h4>
+                <pre id="mergedResult"></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img id="modalImage" src="images/rahul.png" alt="Brand Logo">
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            var modal = document.getElementById('myModal');
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            var modal = document.getElementById('myModal');
+            modal.style.display = 'none';
+        }
+
+        function redirectWebsite(event) {
+            var target = event.target;
+            // Check if the clicked element is the image
+            if (target.tagName.toLowerCase() === 'img') {
+                // Open modal instead of redirecting
+                openModal();
+                event.preventDefault(); // Prevent default link behavior
+            }
+        }
+
+        function mergeArray() {
+            try {
+                const json1 = JSON.parse(document.getElementById('json1').value);
+                const json2 = JSON.parse(document.getElementById('json2').value);
+
+                // Create a dictionary from json2 for quick lookup by 'id'
+                const json2Dict = Object.fromEntries(json2.map(item => [item.id, item]));
+
+                // Merge the dictionaries from json2 into the corresponding dictionaries in json1
+                const mergedArray = json1.map(item => {
+                    return { ...item, ...(json2Dict[item.id] || {}) };
+                });
+
+                document.getElementById('mergedResult').textContent = JSON.stringify(mergedArray, null, 2);
+            } catch (error) {
+                document.getElementById('mergedResult').textContent = 'Invalid JSON format. Please check your input.';
+            }
+        }
+    </script>
+</body>
+</html>
