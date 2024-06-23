@@ -43,12 +43,30 @@
         .navbar-brand img:hover {
             transform: scale(1.1); /* Scale image on hover for slight zoom effect */
         }
+        .navbar-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .navbar-links a {
+            color: #1e10d8;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .navbar-links a:hover {
+            color: #ddd;
+        }
+        .footer {
+        text-align: center;
+        margin-top: 20px; /* Optional: Adjust margin as needed */
+        }
         .container {
             max-width: 1080px;
             margin: 20px auto;
             padding: 20px;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 15px; /* Added border-radius */
         }
         .content {
             text-align: center;
@@ -111,6 +129,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             text-align: center;
             position: relative;
+            border-radius: 15px; /* Added border-radius */
         }
         .modal-content img {
             width: 100%; /* Ensure the image fills the modal */
@@ -133,6 +152,17 @@
             text-decoration: none;
             cursor: pointer;
         }
+        .example-container {
+            background-color: #e0e0e0;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 15px; /* Added border-radius */
+        }
+        .example pre {
+            text-align: left;
+            background-color: #f8f9fa;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
@@ -142,11 +172,50 @@
                 <img id="logoImage" src="images/rahul.png" alt="Brand Logo" onclick="openModal()">
                 <span class="brand-text">www.rahulreza.com</span>
             </a>
+            <div class="navbar-links">
+                <a href="https://jsonmerger.rahulreza.com" target="_blank">jsonmerger.rahulreza.com  </a>
+                <a href="" target="_blank">|| </a>
+                <a href="https://rahulreza.github.io/jsonfilemerger" target="_blank">rahulreza.github.io/jsonfilemerger</a>
+            </div>
         </div>
     </nav>
     <div class="container">
         <div class="content">
             <h3 class="title">Merge Two JSON Arrays</h3>
+            
+            <!-- Example Section -->
+            <div class="example-container">
+                <h4>Example</h4>
+                <h4>Objects must be in bracket [ ]</h3>
+                <div class="json-inputs">
+                    <div class="json-input">
+                        <h4>JSON 1</h4>
+                        <pre>
+[
+    { "id": 1, "name": "John" },
+    { "id": 2, "name": "Jane" }
+]
+                        </pre>
+                    </div>
+                    <div class="json-input">
+                        <h4>JSON 2</h4>
+                        <pre>
+[
+    { "id": 1, "age": 30 },
+    { "id": 2, "age": 25 }
+]
+                        </pre>
+                    </div>
+                </div>
+                <h4>Expected Merged Result</h4>
+                <pre>
+[
+    { "id": 1, "name": "John", "age": 30 },
+    { "id": 2, "name": "Jane", "age": 25 }
+]
+                </pre>
+            </div>
+
             <div class="json-inputs">
                 <div class="json-input">
                     <h4>JSON 1</h4>
@@ -173,6 +242,16 @@
         </div>
     </div>
 
+    <!-- YouTube Video -->
+    <div class="container">
+        <div class="content">
+            <h3 class="title">Watch this Tutorial</h3>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/fEMOugwWyAk?si=Ds3XMjsQwZ4xVC6O" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+    <div class="footer">
+        <p>All rights reserved Md. Rahul Reza &copy; 2024</p>
+    </div>
     <script>
         function openModal() {
             var modal = document.getElementById('myModal');
@@ -204,12 +283,12 @@
 
                 // Merge the dictionaries from json2 into the corresponding dictionaries in json1
                 const mergedArray = json1.map(item => {
-                    return { ...item, ...(json2Dict[item.id] || {}) };
+                    return { ...item, ...json2Dict[item.id] };
                 });
 
                 document.getElementById('mergedResult').textContent = JSON.stringify(mergedArray, null, 2);
-            } catch (error) {
-                document.getElementById('mergedResult').textContent = 'Invalid JSON format. Please check your input.';
+            } catch (e) {
+                document.getElementById('mergedResult').textContent = 'Invalid JSON input';
             }
         }
     </script>
